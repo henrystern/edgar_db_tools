@@ -1,1 +1,6 @@
-Some tools for quickly generating your own database of SEC financial statements.
+Some tools for generating your own version of the SEC EDGAR database of financial statements.
+
+Some usecases:
+  * Bypassing API limits
+  * Speeding up queries
+  * Mutating existing variables for ratio analysis
