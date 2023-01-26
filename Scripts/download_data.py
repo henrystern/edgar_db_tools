@@ -3,12 +3,12 @@ import zipfile
 import io
 from datetime import datetime
 
-
+# Download and extract datasets over a specified period
 def download_data(start_year=2009,
-         start_qtr=1,
-         end_year=(datetime.now().year - 1),
-         end_qtr=4,
-         output_dir="../data"):
+                  start_qtr=1,
+                  end_year=(datetime.now().year - 1),
+                  end_qtr=4,
+                  output_dir="../edgar_data"):
 
     qtr = start_qtr
     for year in range(start_year, end_year + 1):

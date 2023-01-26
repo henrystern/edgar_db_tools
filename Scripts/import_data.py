@@ -4,12 +4,24 @@ from datetime import datetime
 import getpass
 import mysql.connector
 
+# Import datasets into the MySQL database
 def import_data(db=None,
-                data_dir="../data",
+                data_dir="../edgar_data",
                 start_year=2009,
                 start_qtr=1,
                 end_year=(datetime.now().year - 1),
                 end_qtr=4):
+
+    # Generate the import command for execution by the cursor
+    def generate_command(path, year, qtr, file, extension, db_name):
+        file_path = path + str(year) + "q" + str(qtr) + "/" + file + extension
+        print(f'{datetime.now():%m-%d %H:%M:%S}', file_path)
+        sql_command = ("LOAD DATA LOCAL INFILE '"
+                    + file_path
+                    + "' IGNORE INTO TABLE `" + db_name + "`.`" + file
+                    + "` CHARACTER SET utf8mb4 FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n' IGNORE 1 LINES;")
+        return sql_command
+
 
     if db == None:
         db = get_db_credentials()
@@ -44,9 +56,10 @@ def import_data(db=None,
 def get_db_credentials():
         db = {}
         print("Input Database Credentials")
-        db["host"] = input("Host: ") or "localhost"
-        db["user"] = input("User: ") or "root" 
-        db["db_name"] = input("Database name: ") or "edgar"
+        db["host"] = input("Host: (localhost)") or "localhost"
+        db["port"] = input("Port: (3306)") or "port"
+        db["user"] = input("User: (root)") or "root" 
+        db["db_name"] = input("Database name: (edgar)") or "edgar"
         return db
 
 def connect_to_db(db):
@@ -54,25 +67,13 @@ def connect_to_db(db):
         database_connection = mysql.connector.connect(user=db["username"],
                                      password=db["password"],
                                      host=db["host"],
+                                     port=db["port"] if db["port"] else 3306,
                                      database=db["db_name"],
                                      allow_local_infile=True)
         return database_connection
     except:
         print("Can't connect to database")
         return None
-
-def generate_command(path, year, qtr, file, extension, db_name):
-    file_path = path + str(year) + "q" + str(qtr) + "/" + file + extension
-
-    print(f'{datetime.now():%m-%d %H:%M:%S}', file_path)
-
-    sql_command = ("LOAD DATA LOCAL INFILE '"
-                   + file_path
-                   + "' IGNORE INTO TABLE `" + db_name + "`.`" + file
-                   + "` CHARACTER SET utf8mb4 FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n' IGNORE 1 LINES;")
-    print(sql_command)
-    return sql_command
-
 
 if __name__ == "__main__":
     import_data()
