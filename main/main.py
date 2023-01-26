@@ -1,9 +1,9 @@
 # Run db_schema.sql in mysql first to generate the database
 
-from scripts/download_data import download_data
-from scripts/import_data import import_data
-from scripts/get_price_data import get_price_data
-from scripts/import_supplementary_data import import_supplementary_data
+from scripts.download_data import download_data
+from scripts.import_data import import_data
+from scripts.get_price_data import get_price_data
+# from scripts import import_supplementary_data
 from datetime import datetime
 import getpass
 
