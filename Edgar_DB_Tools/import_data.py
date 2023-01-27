@@ -36,7 +36,7 @@ def import_data(db=None,
 
     cursor = connection.cursor()
 
-    files = ["num", "pre", "sub", "tag"]
+    files = ["sub", "tag", "num", "pre"]
 
     for year in range(start_year, end_year + 1):
         for qtr in range(start_qtr, 4 + 1):
@@ -46,10 +46,10 @@ def import_data(db=None,
                 sql_command = generate_command(
                     data_dir, year, qtr, file, ".txt", db["db_name"])
                 cursor.execute(sql_command)
+                connection.commit()
         start_qtr = 1
         year += 1
 
-    connection.commit()
     cursor.close()
     connection.close()
 
