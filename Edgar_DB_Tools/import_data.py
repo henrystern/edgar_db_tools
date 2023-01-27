@@ -6,7 +6,7 @@ import mysql.connector
 
 # Import datasets into the MySQL database
 def import_data(db=None,
-                data_dir="../edgar_data",
+                data_dir="./edgar_data/",
                 start_year=2009,
                 start_qtr=1,
                 end_year=(datetime.now().year - 1),
