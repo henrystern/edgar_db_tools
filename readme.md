@@ -4,4 +4,4 @@ Some usecases:
   * Bypassing API limits
   * Speeding up queries
   * Combining with other data (price, NAICS) that isn't available in EDGAR.
-  * Creating new variables for in database ratio analysis
+  * Creating new variables for in-database ratio analysis
