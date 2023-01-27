@@ -15,7 +15,7 @@ def import_data(db=None,
     # Generate the import command for execution by the cursor
     def generate_command(path, year, qtr, file, extension, db_name):
         file_path = path + str(year) + "q" + str(qtr) + "/" + file + extension
-        print(f'{datetime.now():%m-%d %H:%M:%S}', file_path)
+        print(f'{datetime.now():%m-%d %H:%M:%S}', "Importing", file_path)
         sql_command = ("LOAD DATA LOCAL INFILE '"
                     + file_path
                     + "' IGNORE INTO TABLE `" + db_name + "`.`" + file
@@ -34,7 +34,7 @@ def import_data(db=None,
     if not connection:
         return
 
-    cursor = db.cursor()
+    cursor = connection.cursor()
 
     files = ["num", "pre", "sub", "tag"]
 
@@ -64,10 +64,10 @@ def get_db_credentials():
 
 def connect_to_db(db):
     try:
-        database_connection = mysql.connector.connect(user=db["username"],
+        database_connection = mysql.connector.connect(user=db["user"],
                                      password=db["password"],
                                      host=db["host"],
-                                     port=db["port"] if db["port"] else 3306,
+                                     port=db["port"],
                                      database=db["db_name"],
                                      allow_local_infile=True)
         return database_connection
