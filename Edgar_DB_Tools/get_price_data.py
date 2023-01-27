@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 import time
 
-# Get Yahoo Finance price data for each ticker
+# Get Yahoo Finance OHLCV for each ticker
 def get_price_data(start=datetime(2009, 1, 1).strftime('%Y-%m-%d'), 
                    end=datetime.today().strftime('%Y-%m-%d'), 
                    frequency='1wk', # see yfinance docs 
@@ -29,11 +29,11 @@ def get_price_data(start=datetime(2009, 1, 1).strftime('%Y-%m-%d'),
                 price.to_csv(output_dir + 'price_data.csv', index=False)
         raw_data = yf.download(ticker, start, end, interval=frequency)
         stock_data = pd.DataFrame(
-            columns=['ticker', 'cik', 'date', 'price', 'volume'])
+            columns=['ticker', 'cik', 'date', 'open', 'high', 'low', 'close', 'volume'])
         stock_data.price = raw_data.Close
-        stock_data.volume = raw_data.Volume
-        stock_data.date = raw_data.index
         stock_data.ticker = ticker
+        stock_data.date = raw_data.index
+        stock_data.volume = raw_data.Volume
         price = price.append(stock_data)
         time.sleep(2)  # max 2000 requests per hour
 
