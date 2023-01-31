@@ -23,7 +23,8 @@ def connect_to_db(db):
                                      port=db["port"],
                                      database=db["db_name"],
                                      allow_local_infile=True)
+        print("Connected to database")
         return database_connection
-    except:
-        print("Can't connect to database")
+    except mysql.connector.Error:
+        print("Couldn't connect to database") 
         return None
