@@ -12,15 +12,13 @@ from ratelimit import limits, sleep_and_retry
 
 from utils import get_db_credentials, connect_to_db
 
-# Download and extract EDGAR datasets over a specified period
-
 
 def download_edgar_data(start_year=2009,
-                  start_qtr=1,
-                  end_year=(datetime.now().year - 1),
-                  end_qtr=4,
-                  output_dir="./edgar_data/"):
-
+                        start_qtr=1,
+                        end_year=(datetime.now().year - 1),
+                        end_qtr=4,
+                        output_dir="./edgar_data/"):
+    """Download and extract EDGAR datasets over a specified period"""
     for year in range(start_year, end_year + 1):
         for q in range(start_qtr, 4 + 1):
             if year == end_year and q == end_qtr + 1:
@@ -34,16 +32,14 @@ def download_edgar_data(start_year=2009,
             z.extractall(output_dir + period)
         start_qtr = 1
 
-# Import EDGAR datasets into the MySQL database
-
 
 def import_edgar_data(db=None,
-                data_dir="./edgar_data/",
-                start_year=2009,
-                start_qtr=1,
-                end_year=(datetime.now().year - 1),
-                end_qtr=4):
-
+                      data_dir="./edgar_data/",
+                      start_year=2009,
+                      start_qtr=1,
+                      end_year=(datetime.now().year - 1),
+                      end_qtr=4):
+    """Import EDGAR datasets into the MySQL database"""
     # Generate the import command for execution by the cursor
     def generate_command(path, year, qtr, file, extension, db_name):
         file_path = path + str(year) + "q" + str(qtr) + "/" + file + extension
@@ -80,8 +76,6 @@ def import_edgar_data(db=None,
     cursor.close()
     connection.close()
 
-# Get Yahoo Finance OHLCV for each ticker
-
 
 def get_price_data(start=datetime(2009, 1, 1).strftime('%Y-%m-%d'),
                    end=datetime.today().strftime('%Y-%m-%d'),
@@ -89,7 +83,7 @@ def get_price_data(start=datetime(2009, 1, 1).strftime('%Y-%m-%d'),
                    data='./other_data/CIK_to_company_tickers.json',
                    output_dir='./other_data/',
                    output_name='price_data.csv'):
-
+    """Get Yahoo Finance OHLCV for each ticker"""
     cik_to_tick = pd.read_json(data).T
     num_tickers = len(cik_to_tick) - 1
     for i, (cik, ticker, company) in cik_to_tick.iterrows():
@@ -115,10 +109,9 @@ def get_price_data(start=datetime(2009, 1, 1).strftime('%Y-%m-%d'),
 def check_api_limit():
     ...
 
-# Import price data into MySQL table 'price'
-
 
 def import_price_data(db=None, data="./other_data/price_data.csv"):
+    """Import price data into MySQL table `price`"""
 
     db = get_db_credentials(db)
     connection = connect_to_db(db)
@@ -139,8 +132,10 @@ def import_price_data(db=None, data="./other_data/price_data.csv"):
     cursor.close()
     connection.close()
 
+
 def import_supplementary_data():
     ...
+
 
 # If run as a script do everything in one step
 # Modify these values as needed
@@ -169,13 +164,13 @@ if __name__ == "__main__":
 
     connection.close()
 
-    # download_edgar_data(start_year, start_qtr, end_year, end_qtr, output_dir)
-    # import_edgar_data(db, output_dir, start_year, start_qtr, end_year, end_qtr)
+    download_edgar_data(start_year, start_qtr, end_year, end_qtr, output_dir)
+    import_edgar_data(db, output_dir, start_year, start_qtr, end_year, end_qtr)
 
-    # get_price_data(start=datetime(start_year, start_qtr * 4, 1).strftime('%Y-%m-%d'),
-    #                end=datetime(end_year, end_qtr * 4, 1).strftime('%Y-%m-%d'),
-    #                data=ticker_data,
-    #                output_dir=price_data_output_dir,
-    #                output_name=price_data_output_name)
+    get_price_data(start=datetime(start_year, start_qtr * 4, 1).strftime('%Y-%m-%d'),
+                   end=datetime(end_year, end_qtr * 4, 1).strftime('%Y-%m-%d'),
+                   data=ticker_data,
+                   output_dir=price_data_output_dir,
+                   output_name=price_data_output_name)
 
     import_price_data(db, price_data_output_dir + price_data_output_name)
