@@ -1,0 +1,4 @@
+ratelimit
+mysql.connector
+yfinance
+pandas
